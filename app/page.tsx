@@ -10,7 +10,13 @@ export default function Home() {
 
   const apiUrl = useMemo(() => {
     if (typeof window === "undefined" || !startDate || !endDate) return "";
-    return `${window.location.origin}/api/wallpaper?start=${startDate}&end=${endDate}`;
+    // Only accept YYYY-MM-DD pattern to prevent any injection
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+    if (!datePattern.test(startDate) || !datePattern.test(endDate)) return "";
+    const origin = window.location.origin;
+    // Ensure origin is a safe https/http URL before constructing the link
+    if (!/^https?:\/\//.test(origin)) return "";
+    return `${origin}/api/wallpaper?start=${startDate}&end=${endDate}`;
   }, [startDate, endDate]);
 
   async function handleCopy() {
@@ -166,7 +172,7 @@ export default function Home() {
               <>
                 Search for and add{" "}
                 <span className="text-white font-medium">
-                  &ldquo;Get Contents of URL&rdquo;
+                  {'"'}Get Contents of URL{'"'}
                 </span>
                 . Paste the copied API link into the URL field.
               </>,
@@ -175,7 +181,7 @@ export default function Home() {
                 <span className="text-white font-medium">Add Action</span>{" "}
                 again and search for{" "}
                 <span className="text-white font-medium">
-                  &ldquo;Set Wallpaper&rdquo;
+                  {'"'}Set Wallpaper{'"'}
                 </span>
                 . Connect it to the contents from the previous step.
               </>,
@@ -189,7 +195,7 @@ export default function Home() {
               <>
                 Toggle{" "}
                 <span className="text-white font-medium">
-                  &ldquo;Show Preview&rdquo; off
+                  {'"'}Show Preview{'"'} off
                 </span>{" "}
                 so the automation runs silently while you sleep.
               </>,
