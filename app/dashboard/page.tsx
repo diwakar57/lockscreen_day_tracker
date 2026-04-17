@@ -284,7 +284,7 @@ export default function DashboardPage() {
             🔗 Your Shortcut URL
           </h2>
           <p className="text-neutral-400 text-xs mb-3">
-            This permanent link always generates today&apos;s wallpaper based on your
+            This permanent link always generates today's wallpaper based on your
             saved settings. Use it in iOS Shortcuts.
           </p>
 
