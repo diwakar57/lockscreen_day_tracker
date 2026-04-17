@@ -5,6 +5,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// In Prisma v7+ the connection URL is no longer set here.
+// It is configured in prisma.config.ts (for CLI commands) and
+// passed to PrismaClient via a driver adapter at runtime (see lib/prisma.ts).
 datasource db {
   provider = "postgresql"
 }

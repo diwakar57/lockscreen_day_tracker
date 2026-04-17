@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface UserSettings {
   startDate: string | null;
@@ -231,11 +232,11 @@ export default function DashboardPage() {
 
           {settings.bgImageUrl && (
             <div className="mb-4 rounded-lg overflow-hidden border border-neutral-700 h-32 relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={settings.bgImageUrl}
                 alt="Current background"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
             </div>
           )}

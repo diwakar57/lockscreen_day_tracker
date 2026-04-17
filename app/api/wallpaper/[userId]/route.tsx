@@ -145,6 +145,7 @@ export async function GET(
         {/* Background image layer */}
         {bgImageUrl ? (
           <>
+            {/* next/image cannot be used inside @vercel/og ImageResponse — only native <img> is supported */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={bgImageUrl}

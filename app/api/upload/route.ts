@@ -15,8 +15,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "No file provided" }, { status: 400 });
   }
 
-  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-  if (!allowedTypes.includes(file.type)) {
+  const allowedTypes: Record<string, string> = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+    "image/gif": "gif",
+  };
+  const ext = allowedTypes[file.type];
+  if (!ext) {
     return NextResponse.json(
       { error: "Invalid file type. Allowed: JPEG, PNG, WEBP, GIF." },
       { status: 400 }
@@ -31,7 +37,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
-  const ext = file.name.split(".").pop() ?? "bin";
   const filename = `bg-${session.user.id}-${Date.now()}.${ext}`;
 
   const blob = await put(filename, file, {
