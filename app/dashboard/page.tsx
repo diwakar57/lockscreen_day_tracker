@@ -3,11 +3,13 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { DEVICES } from "@/lib/devices";
 
 interface UserSettings {
   startDate: string | null;
   endDate: string | null;
   bgImageUrl: string | null;
+  phoneModel: string;
 }
 
 export default function DashboardPage() {
@@ -17,9 +19,11 @@ export default function DashboardPage() {
     startDate: null,
     endDate: null,
     bgImageUrl: null,
+    phoneModel: "iphone-15-pro",
   });
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [phoneModel, setPhoneModel] = useState("iphone-15-pro");
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -49,6 +53,7 @@ export default function DashboardPage() {
         setSettings(data);
         setStartDate(data.startDate ? data.startDate.split("T")[0] : "");
         setEndDate(data.endDate ? data.endDate.split("T")[0] : "");
+        setPhoneModel(data.phoneModel ?? "iphone-15-pro");
       }
     }
     load();
@@ -68,7 +73,7 @@ export default function DashboardPage() {
       const res = await fetch("/api/user", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ startDate, endDate }),
+        body: JSON.stringify({ startDate, endDate, phoneModel }),
       });
       if (!res.ok) throw new Error("Failed to save");
       setSaveMsg("✓ Dates saved!");
@@ -209,6 +214,27 @@ export default function DashboardPage() {
                 required
               />
             </div>
+            <div>
+              <label
+                htmlFor="phone-model"
+                className="block text-sm font-medium text-neutral-300 mb-1"
+              >
+                iPhone Model
+              </label>
+              <select
+                id="phone-model"
+                value={phoneModel}
+                onChange={(e) => setPhoneModel(e.target.value)}
+                className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2.5 text-white
+                           focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-neutral-500"
+              >
+                {DEVICES.map((device) => (
+                  <option key={device.id} value={device.id}>
+                    {device.name}
+                  </option>
+                ))}
+              </select>
+            </div>
             <button
               type="submit"
               disabled={saving}
@@ -336,7 +362,12 @@ export default function DashboardPage() {
         </section>
 
         <footer className="mt-8 text-center text-neutral-600 text-xs">
-          Designed for iPhone 15 Pro (1179 × 2556)
+          {(() => {
+            const d = DEVICES.find((dev) => dev.id === phoneModel);
+            return d
+              ? `Optimized for ${d.name} (${d.width} × ${d.height})`
+              : "Designed for iPhone";
+          })()}
         </footer>
       </div>
     </main>
