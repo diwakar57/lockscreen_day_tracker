@@ -365,7 +365,7 @@ export default function DashboardPage() {
           {(() => {
             const d = DEVICES.find((dev) => dev.id === phoneModel);
             return d
-              ? `Optimised for ${d.name} (${d.width} × ${d.height})`
+              ? `Optimized for ${d.name} (${d.width} × ${d.height})`
               : "Designed for iPhone";
           })()}
         </footer>
