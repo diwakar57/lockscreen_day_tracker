@@ -1,5 +1,6 @@
 import { ImageResponse } from "@vercel/og";
 import { prisma } from "@/lib/prisma";
+import { DEVICES } from "@/lib/devices";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,7 @@ export async function GET(
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { startDate: true, endDate: true, bgImageUrl: true },
+    select: { startDate: true, endDate: true, bgImageUrl: true, phoneModel: true },
   });
 
   if (!user) {
@@ -62,7 +63,7 @@ export async function GET(
     );
   }
 
-  const { startDate, endDate, bgImageUrl } = user;
+  const { startDate, endDate, bgImageUrl, phoneModel } = user;
 
   if (!startDate || !endDate) {
     return new Response(
@@ -83,14 +84,16 @@ export async function GET(
   const rawPassed = Math.round((todayUTC.getTime() - startDate.getTime()) / MS_PER_DAY);
   const passedDays = Math.min(Math.max(rawPassed, 0), totalDays);
 
-  // iPhone 15 Pro canvas
-  const CANVAS_WIDTH = 1179;
-  const CANVAS_HEIGHT = 2556;
+  // Resolve device dimensions (fall back to iPhone 15 Pro if not found)
+  const device = DEVICES.find((d) => d.id === phoneModel) ?? DEVICES.find((d) => d.id === "iphone-15-pro")!;
+
+  const CANVAS_WIDTH = device.width;
+  const CANVAS_HEIGHT = device.height;
 
   // iOS Lock Screen Safe Zone
-  const TOP_MARGIN = 850;
-  const BOTTOM_MARGIN = 500;
-  const SIDE_MARGIN = 100;
+  const TOP_MARGIN = device.safeTop;
+  const BOTTOM_MARGIN = device.safeBottom;
+  const SIDE_MARGIN = device.safeSide;
 
   const USABLE_WIDTH = CANVAS_WIDTH - SIDE_MARGIN * 2; // 979
   const USABLE_HEIGHT = CANVAS_HEIGHT - TOP_MARGIN - BOTTOM_MARGIN; // 1206

@@ -11,7 +11,7 @@ export async function GET(): Promise<NextResponse> {
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { startDate: true, endDate: true, bgImageUrl: true },
+    select: { startDate: true, endDate: true, bgImageUrl: true, phoneModel: true },
   });
 
   if (!user) {
@@ -29,16 +29,18 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
   }
 
   const body = await request.json();
-  const { startDate, endDate, bgImageUrl } = body as {
+  const { startDate, endDate, bgImageUrl, phoneModel } = body as {
     startDate?: string | null;
     endDate?: string | null;
     bgImageUrl?: string | null;
+    phoneModel?: string;
   };
 
   const data: {
     startDate?: Date | null;
     endDate?: Date | null;
     bgImageUrl?: string | null;
+    phoneModel?: string;
   } = {};
 
   if (startDate !== undefined) {
@@ -50,11 +52,14 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
   if (bgImageUrl !== undefined) {
     data.bgImageUrl = bgImageUrl ?? null;
   }
+  if (phoneModel !== undefined) {
+    data.phoneModel = phoneModel;
+  }
 
   const updated = await prisma.user.update({
     where: { id: session.user.id },
     data,
-    select: { startDate: true, endDate: true, bgImageUrl: true },
+    select: { startDate: true, endDate: true, bgImageUrl: true, phoneModel: true },
   });
 
   return NextResponse.json(updated);

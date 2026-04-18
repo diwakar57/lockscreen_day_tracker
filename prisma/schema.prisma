@@ -65,4 +65,5 @@ model User {
   startDate  DateTime?
   endDate    DateTime?
   bgImageUrl String?
+  phoneModel String    @default("iphone-15-pro")
 }
